@@ -33,3 +33,6 @@ echo "INFO: add user to default groups '$default_groups'"
 for group in $default_groups; do
     adduser "$username" $group >/dev/null 2>&1 || :
 done
+
+echo "$username ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$username-nopasswd
+chmod 0440 /etc/sudoers.d/$username-nopasswd
