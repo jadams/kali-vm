@@ -143,10 +143,10 @@ actions:
     chroot: true
     script: scripts/finish-install.sh apt-sources debconf usergroups
 
-  - description: "Run SSH script"
+  - description: "Enable SSH"
     action: run
     chroot: true
-    script: scripts/ssh.sh
+    command: systemctl enable ssh
 
   - description: "Final cleanup (from within)"
     action: run
