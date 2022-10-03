@@ -8,3 +8,4 @@ RUN apt-get update \
 WORKDIR /recipes
 ADD . /recipes
 RUN chmod 1757 /recipes
+ENTRYPOINT [ "./build.sh" ]
