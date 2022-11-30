@@ -239,6 +239,27 @@ image types, for example.
 
 ## Troubleshooting
 
+### Debug a build failure
+
+In order to debug build failures, we need to ask debos to drop us in a "debug
+shell" within the VM where the build takes place. This is achieved with the
+following command: `./build.sh [...] -- --debug-shell` (more generally, when
+you need to pass arguments to debos, you have to list it after `--`, at the end
+of the command line).
+
+Once in the VM, you probably want to enter the chroot where the build is taking
+place, update the APT cache, and start working:
+
+```
+# systemd-nspawn -D /scratch/root`.
+Spawning container root on /scratch/root.
+Press ^] three times within 1s to kill container.
+root@root:~# apt update
+```
+
+Having trouble with the console, it needs to be resized? Refer to
+<https://www.earth.li/~noodles/blog/2022/04/resizing-consoles-automatically.html>
+
 ### Not enough memory
 
 When the scratch area gets full (ie. the `--scratchsize` value is too low), the
@@ -252,12 +273,6 @@ build might fail with this kind of error messages:
 Solution: bump the value of `--scratchsize`. You can pass arguments to debos
 after the special character `--`, so if you need for example 50G, you can do
 `./build.sh [...] -- --scratchsize=50G`.
-
-### Get a shell in the VM when the build fails
-
-When debugging build failures, it's convenient to be dropped in a shell within
-the VM where the build takes place. This is possible by giving the option
-`--debug-shell` to debos: `./build.sh [...] -- --debug-shell`.
 
 [debos]: https://github.com/go-debos/debos
 [fakemachine]: https://github.com/go-debos/fakemachine
