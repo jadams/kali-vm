@@ -2,8 +2,6 @@
 
 set -eu
 
-OUTDIR=images
-
 WELL_KNOWN_CACHING_PROXIES="\
 3142 apt-cacher-ng
 8000 squid-deb-proxy
@@ -34,6 +32,7 @@ FORMAT=
 KEEP=false
 LOCALE=
 MIRROR=
+OUTDIR=
 PACKAGES=
 PASSWORD=
 ROOTFS=
@@ -197,7 +196,27 @@ while getopts ":a:b:D:f:hkL:m:P:r:s:T:U:v:x:zZ:" opt; do
 done
 shift $((OPTIND - 1))
 
-# The first step is to validate the variant.
+# What's left on the command-line are optional arguments for debos.
+# Let's check if user wants to use a particular artifact directory.
+ARTIFACTDIR_ARG=$(echo "$@" | grep -o -- "--artifactdir[= ][^ ]\+" || :)
+if [ "$ARTIFACTDIR_ARG" ]; then
+    OUTDIR=$(echo "$ARTIFACTDIR_ARG" | sed "s/^.*[= ]//")
+else
+    OUTDIR=images
+    set -- "$@" --artifactdir=$OUTDIR
+fi
+
+# Set some options for debos, unless it was already set by the caller.
+# Regarding the scratch size needed to build a Kali Linux image from scratch
+# (ie. in one step, no intermediary rootfs), using the kali-rolling branch, the
+# XFCE desktop, and changing only the toolset: default toolset requires 14G,
+# large toolset 24G and everything toolset 40G. That was back in June 2022.
+echo "$@" | grep -q -e "-m[= ]" -e "--memory[= ]" \
+    || set -- "$@" --memory=4G
+echo "$@" | grep -q -e "--scratchsize[= ]" \
+    || set -- "$@" --scratchsize=45G
+
+# Validate the variant.
 echo $SUPPORTED_VARIANTS | grep -qw $VARIANT \
     || fail "Unsupported variant '$VARIANT'"
 
@@ -233,8 +252,10 @@ if [ "$ROOTFS" ]; then
     [ -z "$TOOLSET"  ] || fail "Option -T can't be used together with option -r"
     [ -z "$USERPASS" ] || fail "Option -U can't be used together with option -r"
     [ -z "$VERSION" ] || fail "Option -x can't be used together with option -r"
-    ARCH=$(basename $ROOTFS | sed "s/\.tar\.gz$//" | rev | cut -d- -f1 | rev)
-    VERSION=$(basename $ROOTFS | sed -E "s/^rootfs-(.*)-$ARCH\.tar\.gz$/\1/")
+    [ "$(dirname $ROOTFS)" = "$OUTDIR" ] || fail "Rootfs must be within '$OUTDIR'"
+    ROOTFS=$(basename $ROOTFS)
+    ARCH=$(echo $ROOTFS | sed "s/\.tar\.gz$//" | rev | cut -d- -f1 | rev)
+    VERSION=$(echo $ROOTFS | sed -E "s/^rootfs-(.*)-$ARCH\.tar\.gz$/\1/")
 else
     [ "$ARCH"    ] || ARCH=$DEFAULT_ARCH
     [ "$BRANCH"  ] || BRANCH=$DEFAULT_BRANCH
@@ -320,21 +341,11 @@ fi
 # Ask for confirmation before starting the build
 ask_confirmation || { echo "Abort."; exit 1; }
 
-# Notes regarding the scratch size needed to build a Kali image from scratch
-# (ie. in one step, no intermediary rootfs), using the kali-rolling branch and
-# xfce desktop, and changing only the toolset. Default toolset needs 14G,
-# large toolset 24G and everything toolset 40G. That was back in June 2022.
-# Now set default debos options, unless user passed it explicitly after '--'.
-echo "$@" | grep -q -e "-m[= ]" -e "--memory[= ]" \
-    || set -- "$@" --memory=4G
-echo "$@" | grep -q -e "--scratchsize[= ]" \
-    || set -- "$@" --scratchsize=45G
-
 mkdir -p $OUTDIR
 
 if [ $VARIANT = rootfs ]; then
     echo "Building rootfs from recipe $(b rootfs.yaml) ..."
-    OUTPUT=$OUTDIR/rootfs-$VERSION-$ARCH
+    OUTPUT=rootfs-$VERSION-$ARCH
     debos "$@" \
         -t arch:$ARCH \
         -t branch:$BRANCH \
@@ -350,7 +361,7 @@ if [ $VARIANT = rootfs ]; then
         rootfs.yaml
 elif [ "$ROOTFS" ]; then
     echo "Building image from recipe $(b image.yaml) ..."
-    OUTPUT=$OUTDIR/kali-linux-$VERSION-$VARIANT-$ARCH
+    OUTPUT=kali-linux-$VERSION-$VARIANT-$ARCH
     debos "$@" \
         -t arch:$ARCH \
         -t format:$FORMAT \
@@ -363,7 +374,7 @@ elif [ "$ROOTFS" ]; then
         image.yaml
 else
     echo "Building image from recipe $(b full.yaml) ..."
-    OUTPUT=$OUTDIR/kali-linux-$VERSION-$VARIANT-$ARCH
+    OUTPUT=kali-linux-$VERSION-$VARIANT-$ARCH
     debos "$@" \
         -t arch:$ARCH \
         -t branch:$BRANCH \
@@ -407,6 +418,6 @@ cat << EOF
                                             .'
                                              .
 
-Successful build! Find your Kali Linux image at: $(b $OUTPUT)
-
+Successful build! The following build artifacts were produced:
 EOF
+cat $OUTDIR/.artifacts | sed "s:^:* $OUTDIR/:"

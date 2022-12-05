@@ -46,8 +46,8 @@ disk_path=$1
 
 [ ${disk_path##*.} = vdi ] || fail "Invalid input file '$disk_path'"
 
-description_template=scripts/templates/vm-description.txt
-machine_template=scripts/templates/vm-definition.vbox
+description_template=$RECIPEDIR/scripts/templates/vm-description.txt
+machine_template=$RECIPEDIR/scripts/templates/vm-definition.vbox
 
 # Prepare all the values
 

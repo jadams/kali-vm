@@ -70,8 +70,8 @@ disk_path=$1
 
 [ ${disk_path##*.} = vmdk ] || fail "Invalid input file '$disk_path'"
 
-description_template=scripts/templates/vm-description.txt
-machine_templace=scripts/templates/vm-definition.ovf
+description_template=$RECIPEDIR/scripts/templates/vm-description.txt
+machine_templace=$RECIPEDIR/scripts/templates/vm-definition.ovf
 
 # Prepare all the values
 

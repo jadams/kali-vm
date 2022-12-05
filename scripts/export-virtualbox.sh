@@ -2,6 +2,8 @@
 
 set -eu
 
+START_TIME=$(date +%s)
+
 keep=0
 image=
 zip=0
@@ -15,16 +17,14 @@ while [ $# -gt 0 ]; do
     shift
 done
 
+cd $ARTIFACTDIR
+
 echo "INFO: Generate $image.vdi"
 qemu-img convert -O vdi $image.raw $image.vdi
-
 [ $keep -eq 1 ] || rm -f $image.raw
 
 echo "INFO: Generate $image.vbox"
-scripts/generate-vbox.sh $image.vdi
-
-cd $(dirname $image)
-image=$(basename $image)
+$RECIPEDIR/scripts/generate-vbox.sh $image.vdi
 
 if [ $zip -eq 1 ]; then
     echo "INFO: Compress to $image.7z"
@@ -32,3 +32,7 @@ if [ $zip -eq 1 ]; then
     mv $image.vdi $image.vbox $image
     7zr a -sdel -mx=9 $image.7z $image
 fi
+
+for fn in $image.*; do
+    [ $(stat -c %Y $fn) -ge $START_TIME ] && echo $fn
+done > .artifacts

@@ -101,3 +101,8 @@ actions:
   - description: "Pack {{ $rootfs }}"
     action: pack
     file: {{ $rootfs }}.tar.gz
+
+  - description: "List build artifacts"
+    action: run
+    postprocess: true
+    command: echo {{ $rootfs }}.tar.gz > $ARTIFACTDIR/.artifacts
