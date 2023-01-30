@@ -30,7 +30,7 @@ jobs:
         upstream_sync_branch: main
         host_domain: gitlab.com
         upstream_sync_repo: kalilinux/build-scripts/kali-vm
-
+        upstream_pull_args: "--allow-unrelated-histories"
         # Set test_mode true to run tests instead of the true action!!
         test_mode: false
       
