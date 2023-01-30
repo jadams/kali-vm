@@ -3,8 +3,13 @@
 set -eu
 
 IMAGE=kali-rolling/vm-builder
-OPTS=(
-    --rm --interactive --tty --net host
+
+OPTS=()
+if [ -t 0 ]; then
+    OPTS+=(--interactive --tty)
+fi
+OPTS+=(
+    --rm --net host
     --device /dev/kvm --group-add $(stat -c "%g" /dev/kvm)
     --security-opt label=disable
     --volume $(pwd):/recipes --workdir /recipes
@@ -24,7 +29,12 @@ else
     exit 1
 fi
 
-bold() { tput bold; echo "$@"; tput sgr0; }
+# Output bold only if both stdout/stderr are opened on a terminal
+if [ -t 1 -a -t 2 ]; then
+    bold() { tput bold; echo "$@"; tput sgr0; }
+else
+    bold() { echo "$@"; }
+fi
 vrun() { bold "$" "$@"; "$@"; }
 vexec() { bold "$" "$@"; exec "$@"; }
 
