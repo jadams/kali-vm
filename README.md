@@ -143,7 +143,7 @@ toolset.  This is a generic image, it comes with support for most VM engines
 out there.  We'll export it to the OVA format, suitable for both VMware and
 VirtualBox.  Let's also install the package `metasploit-framework`.
 
-* `./build.sh -L $LANG -Z $(cat /etc/timezone) -U $USER:'s3cr3t!p4ssw0rd'`
+* `./build.sh -L $LANG -Z $(realpath --relative-to /usr/share/zoneinfo /etc/localtime) -U $USER:password`
 
 Above, we build a Kali rolling image, and configure it to mimic the host
 system: same locale, same timezone and same username.
@@ -200,14 +200,14 @@ To set the `locale`, use the option `-L`.  Pick a value in the 1st column of
 
 To set the `timezone`, use the option `-Z`. Look into `/usr/share/zoneinfo` and
 pick a directory and a sub-directory. In doubt, run `tzselect` to guide you, or
-look at what's configured on your system with `cat /etc/timezone`.
+look at what's configured on your system with `realpath /etc/localtime`.
 
 To set the name and password for the unprivileged user, use the option `-U`.
 The value is a single string and the `:` is used to separate the username from
 the password.
 
-Pro tip: you can use `-L $LANG -Z $(cat /etc/timezone) -U $USER:$USER` to
-configure the image like your own machine.
+Pro tip: you can use `-L $LANG -Z $(realpath --relative-to /usr/share/zoneinfo
+/etc/localtime) -U $USER:$USER` to configure the image like your own machine.
 
 ### Caching proxy configuration
 
