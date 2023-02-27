@@ -47,6 +47,10 @@ ZIP=false
 
 default_toolset() { [ ${DESKTOP:-$DEFAULT_DESKTOP} = none ] && echo headless || echo default; }
 default_version() { echo ${BRANCH:-$DEFAULT_BRANCH} | sed "s/^kali-//"; }
+get_locale() { [ -v $LANG ] && echo $LANG || echo $DEFAULT_LOCALE; }
+get_timezone() { [ -h /etc/localtime ] \
+    && realpath --relative-to /usr/share/zoneinfo /etc/localtime \
+    || echo $DEFAULT_TIMEZONE; }
 
 # Output bold only if both stdout/stderr are opened on a terminal
 if [ -t 1 -a -t 2 ]; then
@@ -266,6 +270,9 @@ else
     [ "$TOOLSET"  ] || TOOLSET=$(default_toolset)
     [ "$USERPASS" ] || USERPASS=$DEFAULT_USERPASS
     [ "$VERSION" ] || VERSION=$(default_version)
+    # Set locale and timezone
+    [ "$LOCALE" = same ] && LOCALE=$(get_locale)
+    [ "$TIMEZONE" = same ] && TIMEZONE=$(get_timezone)
     # Validate some options
     echo $SUPPORTED_BRANCHES | grep -qw $BRANCH \
         || fail "Unsupported branch '$BRANCH'"

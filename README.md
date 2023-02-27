@@ -143,7 +143,7 @@ toolset.  This is a generic image, it comes with support for most VM engines
 out there.  We'll export it to the OVA format, suitable for both VMware and
 VirtualBox.  Let's also install the package `metasploit-framework`.
 
-* `./build.sh -L $LANG -Z $(realpath --relative-to /usr/share/zoneinfo /etc/localtime) -U $USER:password`
+* `./build.sh -L same -Z same -U $USER:password`
 
 Above, we build a Kali rolling image, and configure it to mimic the host
 system: same locale, same timezone and same username.
@@ -206,8 +206,8 @@ To set the name and password for the unprivileged user, use the option `-U`.
 The value is a single string and the `:` is used to separate the username from
 the password.
 
-Pro tip: you can use `-L $LANG -Z $(realpath --relative-to /usr/share/zoneinfo
-/etc/localtime) -U $USER:$USER` to configure the image like your own machine.
+Pro tip: you can use `-L same -Z same -U $USER:$USER` to configure the image
+like your own machine.
 
 ### Caching proxy configuration
 
