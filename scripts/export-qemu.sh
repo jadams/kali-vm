@@ -4,8 +4,10 @@ set -eu
 
 START_TIME=$(date +%s)
 
-keep=0
+info() { echo "INFO:" "$@"; }
+
 image=
+keep=0
 zip=0
 
 while [ $# -gt 0 ]; do
@@ -19,13 +21,13 @@ done
 
 cd $ARTIFACTDIR
 
-echo "INFO: Generate $image.qcow2"
+info "Generate $image.qcow2"
 qemu-img convert -O qcow2 $image.raw $image.qcow2
 
 [ $keep -eq 1 ] || rm -f $image.raw
 
 if [ $zip -eq 1 ]; then
-    echo "INFO: Compress to $image.7z"
+    info "Compress to $image.7z"
     7zr a -sdel -mx=9 $image.7z $image.qcow2
 fi
 

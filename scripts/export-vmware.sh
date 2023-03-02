@@ -2,10 +2,13 @@
 
 set -eu
 
+SCRIPTSDIR=$RECIPEDIR/scripts
 START_TIME=$(date +%s)
 
-keep=0
+info() { echo "INFO:" "$@"; }
+
 image=
+keep=0
 zip=0
 
 while [ $# -gt 0 ]; do
@@ -19,18 +22,18 @@ done
 
 cd $ARTIFACTDIR
 
-echo "INFO: Generate $image.vmdk"
+info "Generate $image.vmdk"
 rm -fr $image.vmwarevm && mkdir $image.vmwarevm
 qemu-img convert -O vmdk -o subformat=twoGbMaxExtentSparse \
     $image.raw $image.vmwarevm/$image.vmdk
 
 [ $keep -eq 1 ] || rm -f $image.raw
 
-echo "INFO: Generate $image.vmx"
-$RECIPEDIR/scripts/generate-vmx.sh $image.vmwarevm/$image.vmdk
+info "Generate $image.vmx"
+$SCRIPTSDIR/generate-vmx.sh $image.vmwarevm/$image.vmdk
 
 if [ $zip -eq 1 ]; then
-    echo "INFO: Compress to $image.7z"
+    info "Compress to $image.7z"
     7zr a -sdel -mx=9 $image.7z $image.vmwarevm
 fi
 

@@ -98,28 +98,24 @@ product_version="Rolling ($version)"
 vendor="Offensive Security"
 vendor_url="https://www.offensive-security.com/"
 
-# For OS IDs and types, refer to:
+# For the list of OS IDs, refer to:
 # https://docs.openlmi.org/en/latest/mof/CIM_SoftwareElement.html
-#
-# The os_type is NOT what's documented in the reference above though,
-# it's what VirtualBox uses internally, and it's used in various places
-# in the OVF, notably it's a keyword in <vbox:Machine OSType="xxx">.
 case $arch in
     amd64)
         long_mode=true
         os_id=96
-        os_type=Debian_64
         os_version=10
         platform=x64
         product_version="$product_version x64"
+        vbox_os_type=Debian_64
         ;;
     i386)
         long_mode=false
         os_id=95
-        os_type=Debian
         os_version=10
         platform=x86
         product_version="$product_version x86"
+        vbox_os_type=Debian
         ;;
     *)
         fail "Invalid architecture '$arch'"
@@ -150,11 +146,11 @@ sed \
     -e "s|%MachineName%|$name|g" \
     -e "s|%MachineUUID%|$machine_uuid|g" \
     -e "s|%OSId%|$os_id|g" \
-    -e "s|%OSType%|$os_type|g" \
     -e "s|%OSVersion%|$os_version|g" \
     -e "s|%Product%|$product|g" \
     -e "s|%ProductUrl%|$product_url|g" \
     -e "s|%ProductVersion%|$product_version|g" \
+    -e "s|%VBoxOSType%|$vbox_os_type|g" \
     -e "s|%Vendor%|$vendor|g" \
     -e "s|%VendorUrl%|$vendor_url|g" \
     -e "s|%VirtualSystemId%|$name|g" \

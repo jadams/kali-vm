@@ -4,6 +4,8 @@ set -eu
 
 START_TIME=$(date +%s)
 
+info() { echo "INFO:" "$@"; }
+
 image=
 zip=0
 
@@ -17,18 +19,18 @@ done
 
 cd $ARTIFACTDIR
 
-echo "INFO: Rename to $image.img"
+info "Rename to $image.img"
 mv -v $image.raw $image.img
 touch $image.img
 
 if [ $zip -eq 1 ]; then
-    echo "INFO: Dig holes in the sparse file"
+    info "Dig holes in the sparse file"
     fallocate -v --dig-holes $image.img
 
-    echo "INFO: Create bmap file $image.img.bmap"
+    info "Create bmap file $image.img.bmap"
     bmaptool create $image.img > $image.img.bmap
 
-    echo "INFO: Compress to $image.img.xz"
+    info "Compress to $image.img.xz"
     xz -f $image.img
 fi
 

@@ -2,10 +2,13 @@
 
 set -eu
 
+SCRIPTSDIR=$RECIPEDIR/scripts
 START_TIME=$(date +%s)
 
-keep=0
+info() { echo "INFO:" "$@"; }
+
 image=
+keep=0
 zip=0
 
 while [ $# -gt 0 ]; do
@@ -19,15 +22,15 @@ done
 
 cd $ARTIFACTDIR
 
-echo "INFO: Generate $image.vdi"
+info "Generate $image.vdi"
 qemu-img convert -O vdi $image.raw $image.vdi
 [ $keep -eq 1 ] || rm -f $image.raw
 
-echo "INFO: Generate $image.vbox"
-$RECIPEDIR/scripts/generate-vbox.sh $image.vdi
+info "Generate $image.vbox"
+$SCRIPTSDIR/generate-vbox.sh $image.vdi
 
 if [ $zip -eq 1 ]; then
-    echo "INFO: Compress to $image.7z"
+    info "Compress to $image.7z"
     mkdir $image
     mv $image.vdi $image.vbox $image
     7zr a -sdel -mx=9 $image.7z $image

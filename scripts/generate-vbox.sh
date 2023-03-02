@@ -63,11 +63,6 @@ mac_address=$(gen_vbox_mac_address)
 disk_uuid=$(get_vdi_disk_uuid $disk_path)
 machine_uuid=$(cat /proc/sys/kernel/random/uuid)
 
-# For OS IDs and types, refer to:
-# https://docs.openlmi.org/en/latest/mof/CIM_SoftwareElement.html
-#
-# The os_type is NOT what's documented in the reference above though,
-# it's what VirtualBox uses internally.
 case $arch in
     amd64)
         long_mode=true
