@@ -1,17 +1,16 @@
-{{ $arch := .arch }}
-{{ $branch := .branch }}
-{{ $mirror := .mirror }}
-{{ $rootfs := .rootfs }}
+{{- $arch := .arch }}
+{{- $branch := .branch }}
+{{- $mirror := .mirror }}
 
-{{ $desktop := .desktop }}
-{{ $locale := .locale }}
-{{ $password := .password }}
-{{ $packages := .packages }}
-{{ $timezone := .timezone }}
-{{ $toolset := .toolset }}
-{{ $username := .username }}
+{{- $desktop := .desktop }}
+{{- $locale := .locale }}
+{{- $password := .password }}
+{{- $packages := .packages }}
+{{- $timezone := .timezone }}
+{{- $toolset := .toolset }}
+{{- $username := .username }}
 
-{{ $hostname := or .hostname "kali" }}
+{{- $hostname := or .hostname "kali" }}
 
 architecture: {{ $arch }}
 
@@ -19,7 +18,7 @@ actions:
   - action: debootstrap
     mirror: {{ $mirror }}
     suite: {{ $branch }}
-    components: [ main, contrib, non-free ]
+    components: [ main, contrib, non-free, non-free-firmware ]
     keyring-file: kali-archive-keyring.gpg
 
   - description: "Install usr-is-merged (cf. debos #361 and #362)"
@@ -98,11 +97,4 @@ actions:
     chroot: false
     script: scripts/cleanup-out.sh
 
-  - description: "Pack {{ $rootfs }}"
-    action: pack
-    file: {{ $rootfs }}.tar.gz
 
-  - description: "List build artifacts"
-    action: run
-    postprocess: true
-    command: echo {{ $rootfs }}.tar.gz > $ARTIFACTDIR/.artifacts

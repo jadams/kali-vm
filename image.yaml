@@ -1,24 +1,18 @@
-{{ $arch := .arch }}
-{{ $format := .format }}
-{{ $imagename := .imagename }}
-{{ $keep := .keep }}
-{{ $rootfs := .rootfs }}
-{{ $size := .size }}
-{{ $variant := .variant }}
-{{ $zip := .zip }}
+{{- $arch := .arch }}
+{{- $format := .format }}
+{{- $imagename := .imagename }}
+{{- $imagesize := .imagesize }}
+{{- $keep := .keep }}
+{{- $variant := .variant }}
+{{- $zip := .zip }}
 
 architecture: {{ $arch }}
 
 actions:
-  - description: "Unpack {{ $rootfs }}"
-    action: unpack
-    compression: gz
-    file: {{ $rootfs }}
-
   - description: "Setup the disk image"
     action: image-partition
     imagename: {{ $imagename }}.raw
-    imagesize: {{ $size }}
+    imagesize: {{ $imagesize }}
     partitiontype: msdos
     partitions:
       - name: root

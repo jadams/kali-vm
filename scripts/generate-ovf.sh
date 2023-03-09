@@ -95,8 +95,8 @@ license="GPL v3 ~ https://www.kali.org/docs/policy/kali-linux-open-source-policy
 product="Kali Linux"
 product_url="https://www.kali.org/"
 product_version="Rolling ($version)"
-vendor="Offensive Security"
-vendor_url="https://www.offensive-security.com/"
+vendor="OffSec"
+vendor_url="https://www.offsec.com/"
 
 # For the list of OS IDs, refer to:
 # https://docs.openlmi.org/en/latest/mof/CIM_SoftwareElement.html

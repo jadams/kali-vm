@@ -1,2 +1,0 @@
-SHA1 (Kali-Linux-2021.3-vbox-amd64.ovf) = cd05e0b4090ff3f9f5bc49559db14449c732f3dd
-SHA1 (Kali-Linux-2021.3-vbox-amd64-disk001.vmdk) = 74899959afd94aa660483f32c48b7f5d9fc2720a

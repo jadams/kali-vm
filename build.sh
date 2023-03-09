@@ -357,56 +357,35 @@ ask_confirmation || { echo "Abort."; exit 1; }
 mkdir -p $OUTDIR
 
 if [ $VARIANT = rootfs ]; then
-    echo "Building rootfs from recipe $(b rootfs.yaml) ..."
-    OUTPUT=rootfs-$VERSION-$ARCH
-    debos "$@" \
-        -t arch:$ARCH \
-        -t branch:$BRANCH \
-        -t desktop:$DESKTOP \
-        -t locale:$LOCALE \
-        -t mirror:$MIRROR \
-        -t packages:"$PACKAGES" \
-        -t password:"$PASSWORD" \
-        -t rootfs:$OUTPUT \
-        -t timezone:$TIMEZONE \
-        -t toolset:$TOOLSET \
-        -t username:$USERNAME \
-        rootfs.yaml
+    ROOTFS=rootfs-$VERSION-$ARCH
+    IMAGENAME=
 elif [ "$ROOTFS" ]; then
-    echo "Building image from recipe $(b image.yaml) ..."
-    OUTPUT=kali-linux-$VERSION-$VARIANT-$ARCH
-    debos "$@" \
-        -t arch:$ARCH \
-        -t format:$FORMAT \
-        -t imagename:$OUTPUT \
-        -t keep:$KEEP \
-        -t rootfs:$ROOTFS \
-        -t size:$SIZE \
-        -t variant:$VARIANT \
-        -t zip:$ZIP \
-        image.yaml
+    ROOTFS=${ROOTFS%.tar.*}
+    IMAGENAME=kali-linux-$VERSION-$VARIANT-$ARCH
 else
-    echo "Building image from recipe $(b full.yaml) ..."
-    OUTPUT=kali-linux-$VERSION-$VARIANT-$ARCH
-    debos "$@" \
-        -t arch:$ARCH \
-        -t branch:$BRANCH \
-        -t desktop:$DESKTOP \
-        -t format:$FORMAT \
-        -t imagename:$OUTPUT \
-        -t keep:$KEEP \
-        -t locale:$LOCALE \
-        -t mirror:$MIRROR \
-        -t packages:"$PACKAGES" \
-        -t password:"$PASSWORD" \
-        -t size:$SIZE \
-        -t timezone:$TIMEZONE \
-        -t toolset:$TOOLSET \
-        -t username:$USERNAME \
-        -t variant:$VARIANT \
-        -t zip:$ZIP \
-        full.yaml
+    ROOTFS=
+    IMAGENAME=kali-linux-$VERSION-$VARIANT-$ARCH
 fi
+
+debos "$@" \
+    -t arch:$ARCH \
+    -t branch:$BRANCH \
+    -t desktop:$DESKTOP \
+    -t format:$FORMAT \
+    -t imagename:$IMAGENAME \
+    -t imagesize:$SIZE \
+    -t keep:$KEEP \
+    -t locale:$LOCALE \
+    -t mirror:$MIRROR \
+    -t packages:"$PACKAGES" \
+    -t password:"$PASSWORD" \
+    -t rootfs:$ROOTFS \
+    -t timezone:$TIMEZONE \
+    -t toolset:$TOOLSET \
+    -t username:$USERNAME \
+    -t variant:$VARIANT \
+    -t zip:$ZIP \
+    main.yaml
 
 cat << EOF
 ..............

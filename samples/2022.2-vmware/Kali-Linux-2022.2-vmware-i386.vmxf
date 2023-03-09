@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<Foundry>
-<VM>
-<VMId type="string">52 73 6f a5 60 be 05 b7-e0 04 a2 10 6f e7 c9 92</VMId>
-<ClientMetaData>
-<clientMetaDataAttributes/>
-<HistoryEventList/></ClientMetaData>
-<vmxPathName type="string">Kali-Linux-2022.2-vmware-i386.vmx</vmxPathName></VM></Foundry>

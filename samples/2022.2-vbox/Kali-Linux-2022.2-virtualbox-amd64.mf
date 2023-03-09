@@ -1,2 +1,0 @@
-SHA1 (Kali-Linux-2022.2-virtualbox-amd64.ovf) = 1eb57c229696dcce935cf5c07fa0f07c57dec208
-SHA1 (Kali-Linux-2022.2-virtualbox-amd64-disk001.vmdk) = ce1b910893710775e05d0bc3c9afee568f5f2d69

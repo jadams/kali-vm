@@ -1,2 +1,0 @@
-SHA1 (Kali-Linux-2021.4-virtualbox-i386-disk001.vmdk) = eaaae69523ea12488d1d0d771145938a7b16585a
-SHA1 (Kali-Linux-2021.4-virtualbox-i386.ovf) = 77d72be171d177ef3c4bff3a8edba6a6a941f6f3
