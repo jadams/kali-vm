@@ -51,18 +51,28 @@ get_timezone() { [ -h /etc/localtime ] \
     && realpath --relative-to /usr/share/zoneinfo /etc/localtime \
     || echo $DEFAULT_TIMEZONE; }
 
-# Output bold only if both stdout/stderr are opened on a terminal
-if [ -t 1 -a -t 2 ]; then
-    b() { tput bold; echo -n "$@"; tput sgr0; }
+# Use escape sequences only if both stdout/stderr are opened on a terminal
+if [ -t 1 ] && [ -t 2 ]; then
+    _bold=$(tput bold) _reset=$(tput sgr0)
 else
-    b() { echo -n "$@"; }
+    _bold= _reset=
 fi
+
+b() { echo -n "${_bold}$@${_reset}"; }
 warn() { echo "WARNING:" "$@" >&2; }
 fail() { echo "ERROR:" "$@" >&2; exit 1; }
-fail_invalid() { [ $# -eq 2 ] \
-    && fail "Invalid value '$2' for option $1" \
-    || fail "Invalid value '$2' for option $1 ($3)"; }
-fail_mismatch() { fail "Option mismatch, $1 can't be used together with $2"; }
+
+fail_invalid() {
+    local msg="Invalid value '$2' for option $1"
+    shift 2; [ $# -gt 0 ] && msg="$msg ($@)"
+    fail "$msg"
+}
+
+fail_mismatch() {
+    local msg="Option mismatch, $1 can't be used together with $2"
+    shift 2; [ $# -gt 0 ] && msg="$msg ($@)"
+    fail "$msg"
+}
 
 in_list() {
     local word=$1 && shift
@@ -133,7 +143,8 @@ ask_confirmation() {
     esac
 }
 
-if [ $(id -u) -eq 0 ]; then
+# No need to be root, but the message doesn't make much sense in containers
+if [ $(id -u) -eq 0 ] && [ ! -e /run/.containerenv ] && [ ! -e /.dockerenv ]; then
     warn "This script does not require root privileges."
     warn "Please consider running it as a non-root user."
 fi
