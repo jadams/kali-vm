@@ -55,6 +55,7 @@ actions:
     recommends: true
     packages:
       - kali-linux-core
+      - kali-linux-firmware
   {{ if ne $desktop "none" }}
       - kali-desktop-{{ $desktop }}
   {{ end }}
